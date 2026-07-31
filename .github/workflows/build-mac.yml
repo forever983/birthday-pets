@@ -22,22 +22,47 @@ jobs:
         run: |
           pip install PyQt5 Pillow pyinstaller
 
-      - name: Build macOS .app
+      - name: Build with PyInstaller
         run: |
           pyinstaller ValorantBirthdayPets.spec
 
-      - name: Package as .dmg
+      - name: Create .app bundle
         run: |
-          hdiutil create -volname "BirthdayPets" -srcfolder dist/ValorantBirthdayPets.app -ov -format UDZO dist/BirthdayPets.dmg
+          APP_NAME="ValorantBirthdayPets"
+          mkdir -p "dist/${APP_NAME}.app/Contents/MacOS"
+          mkdir -p "dist/${APP_NAME}.app/Contents/Resources"
+
+          # 移动可执行文件到 .app 中
+          cp "dist/${APP_NAME}" "dist/${APP_NAME}.app/Contents/MacOS/${APP_NAME}"
+
+          # 创建 Info.plist
+          cat > "dist/${APP_NAME}.app/Contents/Info.plist" << 'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>
+            <string>ValorantBirthdayPets</string>
+            <key>CFBundleName</key>
+            <string>Valorant Birthday Pets</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.birthday.valorantpets</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.0</string>
+            <key>CFBundleShortVersionString</key>
+            <string>1.0.0</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>11.0</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+          </dict>
+          </plist>
+          PLIST
 
       - name: Upload .app artifact
         uses: actions/upload-artifact@v4
         with:
           name: BirthdayPets-macOS
           path: dist/ValorantBirthdayPets.app
-
-      - name: Upload .dmg artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: BirthdayPets-macOS-dmg
-          path: dist/BirthdayPets.dmg
