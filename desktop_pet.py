@@ -106,7 +106,7 @@ class PetWindow(QWidget):
         self.bubble_timer = 0
         self.train_speak_timer = 0
 
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.SubWindow)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool)
         self.setAttribute(Qt.WA_TranslucentBackground)
         self.setFixedSize(self.W, self.H)
         self.move(int(start_x), int(start_y))
